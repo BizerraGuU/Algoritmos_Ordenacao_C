@@ -51,7 +51,6 @@ void imprimirVetor(int vet[], int tamanho) {
 int main(){
 
     int escolha;
-    int escolhaSort;
     int i; 
     int *vet;
     int init = 0;
@@ -63,9 +62,10 @@ int main(){
     printf("\nDigite o tamanho escolhido: ");
     scanf("%d", &escolha);
 
-    vet = (int *)malloc(escolha * sizeof(int));
+    vet = (int *)malloc(escolha * sizeof(int));  // realiza a alocação de memoria
 
     if (vet == NULL) {
+        //verifica se o vetor esta vazio ou é inexistente
         printf("Erro ao alocar memória.\n"); // caso seja digitado algo fora do esperado
     }
 
@@ -75,27 +75,14 @@ int main(){
     // realiza a inserção aleatoria dos numeros no vetor com base no tamanho escolhido pelo user
 
     printf("-----------------------------------\n");
-    printf("Escolha o algoritmo de ordenacao: \n");
-    printf("1 - QuickSort \n");
-    printf("2 - HeapSort \n");
-    printf("3 - MergeSort \n");
+    printf("\nVetor desordenado: ");
+    imprimirVetor(vet, escolha);
+
+    quickSort(vet, init, escolha-1);
+
+    printf("\nVetor ordenado: ");
+    imprimirVetor(vet, escolha);
     printf("-----------------------------------\n");
-
-    printf("\nDigite o algoritmo escolhido: ");
-    scanf("%d", &escolhaSort);
-
-    switch(escolhaSort){
-        case 1:
-            printf("\nVetor desordenado: ");
-            imprimirVetor(vet, escolha);
-            quickSort(vet, init, escolha-1);
-            printf("\nVetor ordenado: ");
-            imprimirVetor(vet, escolha);
-            break;
-        default:
-            printf("\nEscolha inválida");
-            break;
-    }
-
+    
     free(vet); //libera a memoria alocada no vetor
 }
