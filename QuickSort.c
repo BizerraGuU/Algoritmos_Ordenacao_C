@@ -1,88 +1,113 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include <stdio.h>   
+#include <stdlib.h>  
+#include <time.h>    
 
+// Função que particiona o vetor em dois subvetores com base em um pivô
 int particionaVetor(int *vet, int init, int fim){
 
+    // Calcula o valor do pivô como a média dos elementos na posição inicial, final e do meio do vetor
     int piv = (vet[init] + vet[fim] + vet[(init + fim)/2]) / 3;
 
-    /* essa primeira linha determina o pivo a partir da soma do primeiro 
-    elemento do vetor e do ultimo elemento e da divisão por dois da soma 
-    entre eles, e por fim divide por 3*/
-
+    // Enquanto os índices de início e fim não se cruzarem
     while(init < fim){
-        while(init < fim && vet[init] <= piv){ init++; } 
-        /*verifica se o inicio é menor que o final e se pivo é maior do 
-        que o valor na posição inicial do vetor e incrementa mais um caso a condição seja verdadeira*/  
-        while(init < fim && vet[fim] > piv){ fim--; }
-        /*faz o processo inverso da anterior e decrementa um em caso da condição ser atendida*/
+        // Move o índice init para a direita enquanto os valores forem menores ou iguais ao pivô
+        while(init < fim && vet[init] <= piv){ 
+            init++; 
+        }
+        // Move o índice fim para a esquerda enquanto os valores forem maiores que o pivô
+        while(init < fim && vet[fim] > piv){ 
+            fim--; 
+        }
 
+        // Troca os elementos nos índices init e fim
         int auxiliar = vet[init];
         vet[init] = vet[fim];
         vet[fim] = auxiliar;
-
-        /*realiza a troca de posição dos valores dentro do vetor*/
     }
 
-    /*retorna o inicio para cotinuar realizando o processo de verificação*/
-
+    // Retorna a posição onde o vetor foi particionado
     return init;
 }
 
+// Função recursiva que implementa o algoritmo Quick Sort
 void quickSort(int *vet, int init, int fim){
     if(init < fim){
-        int posicao = particionaVetor(vet, init, fim); // pega o valor da posicao
-        quickSort(vet, init, posicao-1); // faz a ordenação dos numeros menores à esquerda
-        quickSort(vet, posicao, fim); // faz a ordenacao dos numeros maiores à direita
+        // Particiona o vetor e obtém a posição do pivô
+        int posicao = particionaVetor(vet, init, fim);
+        // Ordena recursivamente a parte esquerda do vetor
+        quickSort(vet, init, posicao-1);
+        // Ordena recursivamente a parte direita do vetor
+        quickSort(vet, posicao, fim);
     }
 }
 
+// Função para imprimir o vetor na tela
 void imprimirVetor(int vet[], int tamanho) {
     for (int i = 0; i < tamanho; i++) {
         if (i == tamanho - 1) {
-            printf("%d", vet[i]);
+            printf("%d", vet[i]);  // Para o último elemento, imprime sem a vírgula
         } else {
-            printf("%d, ", vet[i]);
+            printf("%d, ", vet[i]);  // Imprime o elemento seguido de uma vírgula
         }
     }
-    printf("\n");
+    printf("\n");  // Nova linha após a impressão do vetor
 }
 
 int main(){
 
-    int escolha;
+    int escolha;   // Tamanho do vetor
     int i; 
-    int *vet;
-    int init = 0;
+    int *vet;   // Ponteiro para o vetor de inteiros
+    int init = 0;   // Índice inicial do vetor
+    clock_t inicio, fim;   // Variáveis para medir o tempo de execução
+    double tempo_gasto;    // Variável para armazenar o tempo de execução
 
+    // Exibe um menu para o usuário escolher o tamanho do vetor
     printf("-----------------------------------\n");
     printf("Escolha o tamanho do vetor ordenar\n");
     printf("-----------------------------------\n");
 
+    // Recebe o tamanho escolhido pelo usuário
     printf("\nDigite o tamanho escolhido: ");
     scanf("%d", &escolha);
 
-    vet = (int *)malloc(escolha * sizeof(int));  // realiza a alocação de memoria
+    // Aloca memória para o vetor com o tamanho escolhido
+    vet = (int *)malloc(escolha * sizeof(int));  
 
+    // Verifica se a alocação de memória foi bem-sucedida
     if (vet == NULL) {
-        //verifica se o vetor esta vazio ou é inexistente
-        printf("Erro ao alocar memória.\n"); // caso seja digitado algo fora do esperado
+        printf("Erro ao alocar memória.\n"); 
+        return 1; // Encerra o programa em caso de erro
     }
 
-    srand(time(NULL)); //inicia o gerador de numeros
+    srand(time(NULL)); // Inicializa o gerador de números aleatórios
 
-    for (i = 0; i < escolha; i++) { vet[i] = rand() % 100001; } 
-    // realiza a inserção aleatoria dos numeros no vetor com base no tamanho escolhido pelo user
+    // Preenche o vetor com números aleatórios
+    for (i = 0; i < escolha; i++) { 
+        vet[i] = rand() % 100001; 
+    } 
 
+    // Exibe o vetor desordenado
     printf("-----------------------------------\n");
     printf("\nVetor desordenado: ");
     imprimirVetor(vet, escolha);
 
+    // Mede o tempo de execução do Quick Sort
+    inicio = clock();
     quickSort(vet, init, escolha-1);
+    fim = clock();
 
+    // Calcula o tempo gasto em segundos
+    tempo_gasto = ((double) (fim - inicio)) / CLOCKS_PER_SEC;
+
+    // Exibe o vetor ordenado
     printf("\nVetor ordenado: ");
     imprimirVetor(vet, escolha);
     printf("-----------------------------------\n");
-    
-    free(vet); //libera a memoria alocada no vetor
+
+    // Exibe o tempo gasto para ordenar o vetor
+    printf("Tempo gasto para ordenar o vetor: %f segundos\n", tempo_gasto);
+    printf("-----------------------------------\n");
+
+    free(vet); // Libera a memória alocada para o vetor
 }
